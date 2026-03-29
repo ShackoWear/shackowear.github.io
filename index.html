@@ -3,134 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shacko Digital | Premium Tasarım Mağazası</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Shacko Wear | Aile Boyu Moda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <style>
-        :root { --main: #ff4d6d; --premium: #d4af37; --glass: rgba(255, 255, 255, 0.95); }
-        body { 
-            font-family: 'Poppins', sans-serif; margin: 0; 
-            background: linear-gradient(-45deg, #1a1a1a, #2d3436, #000, #444);
-            background-size: 400% 400%; animation: gradientBG 15s ease infinite;
-            color: #fff; min-height: 100vh;
-        }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        
+        :root { --accent: #00ff88; --dark: #0a0a0a; --card: #151515; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--dark); color: #fff; }
         .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .glass-card {
-            background: var(--glass); backdrop-filter: blur(10px); color: #333;
-            border-radius: 25px; padding: 30px; width: 90%; max-width: 450px;
-            margin: 40px auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); text-align: center;
-        }
+        .category-nav { display: flex; overflow-x: auto; gap: 10px; padding: 15px; background: #111; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #222; }
+        .cat-btn { padding: 8px 20px; border-radius: 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); white-space: nowrap; cursor: pointer; font-size: 0.8em; }
+        .cat-btn.active-cat { background: var(--accent); color: #000; }
 
-        .product-grid { display: grid; grid-template-columns: 1fr; gap: 15px; max-width: 800px; margin: 0 auto; padding-bottom: 80px; }
-        .p-card { background: #fff; border-radius: 15px; padding: 15px; color: #333; text-align: left; border-left: 6px solid var(--main); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .p-card.premium { border-left-color: var(--premium); background: #fffdf5; }
-        .p-price { font-weight: bold; color: var(--main); font-size: 1.2em; margin: 5px 0; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 900px; margin: 20px auto; padding-bottom: 100px; }
+        .p-card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #222; text-align: center; display: flex; flex-direction: column; }
+        .p-img { width: 100%; height: 140px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 2em; }
+        .p-info { padding: 10px; flex-grow: 1; }
+        .p-title { font-size: 0.8em; font-weight: 600; margin-bottom: 5px; }
+        .p-price { color: var(--accent); font-weight: bold; margin-bottom: 10px; }
         
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; margin-top: 5px; }
-        .btn-main { background: var(--main); color: white; }
-        .btn-cart { background: #333; color: white; margin-bottom: 20px; }
+        /* Beden Seçimi Stili */
+        .size-selector { display: flex; justify-content: center; gap: 5px; margin-bottom: 12px; }
+        .size-btn { width: 25px; height: 25px; font-size: 0.6em; border: 1px solid #444; background: #222; color: #fff; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .size-btn:hover, .size-btn.selected { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        .btn-buy { width: 100%; padding: 10px; border: none; border-radius: 5px; background: var(--accent); color: #000; font-weight: bold; cursor: pointer; font-size: 0.8em; }
         
-        /* Sosyal Medya Butonları */
-        .social-bar { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
-        .social-icon { font-size: 1.5em; color: #333; transition: 0.3s; }
-        .social-icon:hover { color: var(--main); }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 30px; padding: 40px; width: 85%; max-width: 400px; margin: 60px auto; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; background: #222; color: #fff; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div id="authPage" class="page active">
         <div class="glass-card">
-            <h1 style="font-family: 'Dancing Script'; color: var(--main); font-size: 3em;">Shacko Digital</h1>
+            <h1 style="font-family: 'Montserrat'; color: var(--accent);">SHACKO WEAR</h1>
             <div id="loginForm">
-                <h3>Giriş Yap</h3>
                 <input type="email" id="lEmail" placeholder="E-posta">
                 <input type="password" id="lPass" placeholder="Şifre">
-                <button class="btn btn-main" onclick="handleLogin()">Giriş Yap</button>
-                <p style="font-size: 0.8em; margin-top: 10px;">Hesabın yok mu? <a href="#" onclick="toggleAuth(false)">Kayıt Ol</a></p>
+                <button class="btn-buy" onclick="handleLogin()">GİRİŞ YAP</button>
+                <p style="font-size: 0.8em; margin-top: 20px;">Hesabın yok mu? <a href="#" onclick="toggleAuth(false)" style="color:var(--accent)">Kayıt Ol</a></p>
             </div>
             <div id="registerForm" style="display: none;">
-                <h3>Yeni Kayıt</h3>
                 <input type="email" id="rEmail" placeholder="E-posta">
                 <input type="password" id="rPass" placeholder="Şifre (Min. 6 Karakter)">
-                <button class="btn btn-main" onclick="handleRegister()">Kayıt Ol</button>
-                <p style="font-size: 0.8em; margin-top: 10px;">Zaten üye misin? <a href="#" onclick="toggleAuth(true)">Giriş Yap</a></p>
-            </div>
-            <div class="social-bar">
-                <a href="https://instagram.com/shackodigital" class="social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/905470031225" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                <button class="btn-buy" onclick="handleRegister()">KAYIT OL</button>
+                <p style="font-size: 0.8em; margin-top: 20px;">Zaten üye misin? <a href="#" onclick="toggleAuth(true)" style="color:var(--accent)">Giriş Yap</a></p>
             </div>
         </div>
     </div>
 
     <div id="shopPage" class="page">
-        <div style="text-align:center; margin-bottom: 20px;">
-            <h1 style="font-family: 'Dancing Script'; font-size: 2.5em; color: var(--main);">Shacko Mağaza ✨</h1>
-            <button class="btn btn-cart" style="width: auto; padding: 10px 20px;" onclick="showPage('cartPage')">🛒 Sepet (<span id="cartCount">0</span>)</button>
-            <br><button onclick="handleLogout()" style="background:none; border:none; color:#aaa; font-size:0.7em; cursor:pointer;">Güvenli Çıkış Yap</button>
+        <div class="category-nav">
+            <button class="cat-btn active-cat" onclick="filterCat('all', this)">Hepsi</button>
+            <button class="cat-btn" onclick="filterCat('erkek', this)">Erkek</button>
+            <button class="cat-btn" onclick="filterCat('kadin', this)">Kadın</button>
+            <button class="cat-btn" onclick="filterCat('erkek-cocuk', this)">Erkek Çocuk</button>
+            <button class="cat-btn" onclick="filterCat('kiz-cocuk', this)">Kız Çocuk</button>
         </div>
 
-        <div class="product-grid">
-            <div class="p-card">
-                <h4>İnteraktif Özür Sayfası</h4>
-                <p style="font-size: 0.8em;">Eğlenceli ve etkileşimli pişmanlık sayfası.</p>
-                <div class="p-price">150 TL</div>
-                <button class="btn btn-main" onclick="addToCart('Özür Sayfası', 150)">Sepete Ekle</button>
-            </div>
-            <div class="p-card">
-                <h4>Müzikli Aşk Albümü</h4>
-                <p style="font-size: 0.8em;">Anılarınız ve en sevdiğiniz parça bir arada.</p>
-                <div class="p-price">250 TL</div>
-                <button class="btn btn-main" onclick="addToCart('Aşk Albümü', 250)">Sepete Ekle</button>
-            </div>
-            <div class="p-card premium">
-                <h4>🗞️ Premium Aşk Gazetesi</h4>
-                <p style="font-size: 0.8em;">Aşkınızı manşetlere taşıyan özel tasarım.</p>
-                <div class="p-price">400 TL</div>
-                <button class="btn btn-main" onclick="addToCart('Aşk Gazetesi', 400)">Sepete Ekle</button>
-            </div>
-            <div class="p-card">
-                <h4>Yıldız Haritası Sayfası</h4>
-                <p style="font-size: 0.8em;">Tanıştığınız anın gökyüzü haritası.</p>
-                <div class="p-price">300 TL</div>
-                <button class="btn btn-main" onclick="addToCart('Yıldız Haritası', 300)">Sepete Ekle</button>
-            </div>
-            <div class="p-card">
-                <h4>WhatsApp Mesaj Arşivi</h4>
-                <p style="font-size: 0.8em;">En özel mesajlar artık bir web sitesi.</p>
-                <div class="p-price">200 TL</div>
-                <button class="btn btn-main" onclick="addToCart('Mesaj Arşivi', 200)">Sepete Ekle</button>
-            </div>
-            <div class="p-card premium">
-                <h4>👑 Sonsuz Aşk Video Sitesi</h4>
-                <p style="font-size: 0.8em;">Videolu ve mektuplu sinematik sunum.</p>
-                <div class="p-price">500 TL</div>
-                <button class="btn btn-main" onclick="addToCart('Sonsuz Aşk', 500)">Sepete Ekle</button>
-            </div>
-        </div>
-    </div>
+        <div class="product-grid" id="mainGrid"></div>
 
-    <div id="cartPage" class="page">
-        <div class="glass-card">
-            <h3>Sepetiniz 🛒</h3>
-            <div id="cartItems" style="text-align: left; margin-bottom: 20px;"></div>
-            <h4 id="totalDisplay">Toplam: 0 TL</h4>
-            <hr>
-            <button class="btn btn-main" onclick="handlePayment()">Ödemeyi Onayla (Shopier)</button>
-            <button class="btn" style="background:#eee;" onclick="showPage('shopPage')">Geri Dön</button>
+        <div style="text-align: center; padding: 20px;">
+            <button onclick="handleLogout()" style="background:none; border:none; color:#555; font-size: 0.8em;">Çıkış Yap</button>
         </div>
     </div>
 
     <script>
+        const products = [
+            { id: 1, cat: 'erkek', title: 'Oversize Siyah Tişört', price: 350, icon: '👕', sizes: ['S', 'M', 'L', 'XL'] },
+            { id: 2, cat: 'kadin', title: 'Crop Top Sweatshirt', price: 450, icon: '👚', sizes: ['S', 'M', 'L'] },
+            { id: 3, cat: 'erkek-cocuk', title: 'Superhero Takım', price: 250, icon: '👦', sizes: ['4-6Y', '7-9Y', '10-12Y'] },
+            { id: 4, cat: 'kiz-cocuk', title: 'Puantiyeli Elbise', price: 300, icon: '👗', sizes: ['4-6Y', '7-9Y', '10-12Y'] },
+            { id: 5, cat: 'erkek', title: 'Siyah Kargo Pantolon', price: 600, icon: '👖', sizes: ['30', '32', '34', '36'] },
+            { id: 6, cat: 'kadin', title: 'Yüksek Bel Jean', price: 550, icon: '👖', sizes: ['34', '36', '38', '40'] }
+        ];
+
         const firebaseConfig = {
             apiKey: "AIzaSyCLds70T1pcQagPA7PI8hts06IRluGoX7E",
             authDomain: "shackodigital.firebaseapp.com",
@@ -142,27 +95,48 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
+        function selectSize(btn) {
+            btn.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        function filterCat(category, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active-cat'));
+            btn.classList.add('active-cat');
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = '';
+            const filtered = category === 'all' ? products : products.filter(p => p.cat === category);
+
+            filtered.forEach(p => {
+                let sizeButtons = p.sizes.map(s => `<button class="size-btn" onclick="selectSize(this)">${s}</button>`).join('');
+                grid.innerHTML += `
+                    <div class="p-card">
+                        <div class="p-img">${p.icon}</div>
+                        <div class="p-info">
+                            <div class="p-title">${p.title}</div>
+                            <div class="p-price">${p.price} TL</div>
+                            <div class="size-selector">${sizeButtons}</div>
+                            <button class="btn-buy" onclick="window.location.href='https://www.shopier.com/ShackoDigital'">Satın Al</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
         auth.onAuthStateChanged((user) => {
-            if (user) { showPage('shopPage'); } else { showPage('authPage'); }
+            if (user) { 
+                showPage('shopPage');
+                filterCat('all', document.querySelector('.cat-btn'));
+            } else { showPage('authPage'); }
         });
 
-        let cart = []; let total = 0;
-        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function toggleAuth(isLogin) { document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none'; document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block'; }
-        
         function handleRegister() { const e = document.getElementById('rEmail').value; const p = document.getElementById('rPass').value; auth.createUserWithEmailAndPassword(e, p).catch(err => alert(err.message)); }
-        function handleLogin() { const e = document.getElementById('lEmail').value; const p = document.getElementById('lPass').value; auth.signInWithEmailAndPassword(e, p).catch(err => alert("Giriş Hatalı!")); }
+        function handleLogin() { const e = document.getElementById('lEmail').value; const p = document.getElementById('lPass').value; auth.signInWithEmailAndPassword(e, p).catch(err => alert("Hatalı Giriş!")); }
         function handleLogout() { auth.signOut(); }
-
-        function addToCart(name, price) { cart.push({name, price}); total += price; updateCart(); alert(name + " eklendi!"); }
-        function updateCart() { document.getElementById('cartCount').innerText = cart.length; document.getElementById('cartItems').innerHTML = cart.map(i => `<div>• ${i.name} - ${i.price} TL</div>`).join(''); document.getElementById('totalDisplay').innerText = "Toplam: " + total + " TL"; }
-        
-        function handlePayment() { 
-            if(cart.length == 0) { alert("Sepet boş!"); return; }
-            alert("Shopier'a yönlendiriliyorsunuz...");
-            window.location.href = "https://www.shopier.com/ShackoDigital"; 
-        }
     </script>
 </body>
-                    </html>
+</html>
+
                     
